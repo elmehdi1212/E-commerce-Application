@@ -1,0 +1,99 @@
+﻿@page "/product/{id:int}"
+@inject IProductService ProductService
+@inject ICartService CartService
+@inject ILocalStorageService LocalStorage
+@inject IToastService ToastService
+@inject IJSRuntime js
+@inject HttpClient client
+@inject NavigationManager navigationManager
+
+<div class="media">
+    <div class="media-img-big-wrapper mr-2">
+        <img class="media-img-big zoom" src="@product.Image" alt="@product.Title" />
+    </div>
+    <div class="media-body">
+        <h2 class="mb-0">@product.Title</h2>
+        <p>@product.Description</p>
+        @if (product.Variants != null && product.Variants.Count > 1)
+        {
+    <div class="form-group">
+        <select class="form-control" @bind="currentEditionId">
+            @foreach (var variant in product.Variants)
+            {
+    <option value="@variant.EditionId">@variant.Edition.Name</option>
+}
+        </select>
+    </div>}
+        @if (GetSelectedVariant() != null)
+        {
+    @if (GetSelectedVariant().OriginalPrice > GetSelectedVariant().Price)
+    {
+    <h6 class="text-muted original-price">$@GetSelectedVariant().OriginalPrice</h6>}
+                    <h4 class="price">
+                        $@GetSelectedVariant().Price
+                    </h4>}
+        <button class="btn btn-primary" @onclick="AddToCart"><i class="oi oi-cart"></i>&nbsp;&nbsp;&nbsp;Add to Cart</button>
+        <button class="btn btn-danger" @onclick="@(() => Delete(product.Id))">Delete</button>
+        <a class="btn btn-success" href="product/edit/@product.Id">Edit</a>
+
+    </div>
+
+</div>
+
+
+
+@code { 
+    private Product product = new Product();
+
+    private int currentEditionId = 1;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await ProductService.GetProduct(Id);
+        if (product.Variants.Count > 0)
+        {
+            currentEditionId = product.Variants[0].EditionId;
+        }
+    }
+
+    private ProductVariant GetSelectedVariant()
+    {
+        var variant = product.Variants.FirstOrDefault(v => v.EditionId == currentEditionId);
+        return variant;
+    }
+
+    private async Task AddToCart()
+    {
+        await CartService.AddToCart(GetSelectedVariant());
+    }
+
+    async Task Delete(int productId)
+    {
+
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {product.Title} Record?"))
+        {
+            await client.DeleteAsync($"api/product/{productId}");
+            navigationManager.NavigateTo("/");
+        }
+    }
+   
+
+  }
+
+<style>
+    .zoom {
+        
+        transition: transform .2s; /* Animation */
+     
+    }
+
+        .zoom:hover {
+            transform: scale(1.1); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+        }
+</style>
+
+
+

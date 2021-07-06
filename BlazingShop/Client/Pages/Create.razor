@@ -1,0 +1,14 @@
+﻿@page "/product/create"
+@inject HttpClient http
+@inject NavigationManager uriHelper
+<h3>Create</h3>
+<FormCreate ButtonText="Create Product" pdd="@pdd"
+      OnValidSubmit="@CreateDeveloper" />
+@code {
+    Product pdd = new Product();
+    async Task CreateDeveloper()
+    {
+        await http.PostAsJsonAsync("api/product", pdd);
+        uriHelper.NavigateTo("/");
+    }
+}

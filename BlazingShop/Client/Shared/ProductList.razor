@@ -1,0 +1,127 @@
+﻿@inject IProductService ProductService
+@implements IDisposable
+
+
+<div class="container d-flex justify-content-center mt-50 mb-50">
+    <div class="row">
+        @foreach (var product in ProductService.Products)
+        {
+    <div class="col-md-4 mt-2" >
+        <div class="card">
+            <div class="card-body">
+                <div class="card-img-actions"> <img src="@product.Image" alt="@product.Title" class="card-img img-fluid zoom" style="padding: 6px;max-width: 150px;max-height: 150px;"  > </div>
+            </div>
+            <div class="card-body bg-light text-center">
+                <div class="mb-2">
+                    <h6 class="font-weight-semibold mb-2"> <a href="#" class="text-default mb-2" data-abc="true">@product.Title</a> </h6> <a href="#" class="text-muted" data-abc="true">@product.Description </a>
+                </div>
+                <h3 class="mb-0 font-weight-semibold">@GetPriceText(product)</h3>
+                <div> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> </div>
+                <div class="text-muted mb-3">34 reviews</div> <a href="/product/@product.Id" class="btn bg-cart"><i class="fa fa-info mr-2"></i> Details</a>
+            </div>
+        </div>
+    </div>
+        }
+
+                </div>
+</div>
+
+
+        @code { protected override void OnInitialized()
+                    {
+                        ProductService.OnChange += StateHasChanged;
+                    }
+
+                    public void Dispose()
+                    {
+                        ProductService.OnChange -= StateHasChanged;
+                    }
+
+                    private string GetPriceText(Product product)
+                    {
+                        var variants = product.Variants;
+                        if (variants.Count == 0)
+                        {
+                            return string.Empty;
+                        }
+                        else if (variants.Count == 1)
+                        {
+                            return $"${variants[0].Price}";
+                        }
+                        decimal minPrice = variants.Min(v => v.Price);
+                        return $"Starting at ${minPrice}";
+                    } }
+<style>
+  
+
+    .mt-50 {
+        margin-top: 50px
+    }
+
+    .mb-50 {
+        margin-bottom: 50px
+    }
+
+    .card {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0, 0, 0, .125);
+        border-radius: .1875rem
+    }
+
+    .card-img-actions {
+        position: relative
+    }
+
+    .card-body {
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1.25rem;
+        text-align: center
+    }
+
+    .card-img {
+        width: 350px
+    }
+
+    .star {
+        color: red
+    }
+
+    .bg-cart {
+        background-color: orange;
+        color: #fff
+    }
+
+        .bg-cart:hover {
+            color: #fff
+        }
+
+    .bg-buy {
+        background-color: green;
+        color: #fff;
+        padding-right: 29px
+    }
+
+        .bg-buy:hover {
+            color: #fff
+        }
+
+    a {
+        text-decoration: none !important
+    }
+    .zoom {
+        transition: transform .2s; /* Animation */
+    }
+
+        .zoom:hover {
+            transform: scale(1.1); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+        }
+</style>

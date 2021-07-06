@@ -1,0 +1,31 @@
+﻿@page "/product/edit/{productId:int}"
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+
+    <h3>Edit</h3>
+
+    <Form ButtonText="Update" pd="pd"
+          OnValidSubmit="@EditDeveloper" />
+
+    @code {
+        [Parameter] public int productId { get; set; }
+        Product pd = new Product();
+
+        protected async override Task OnParametersSetAsync()
+        {
+            pd = await http.GetFromJsonAsync<Product>($"api/product/{productId}");
+        }
+
+        async Task EditDeveloper()
+        {
+            await http.PutAsJsonAsync("api/product", pd);
+            await js.InvokeVoidAsync("alert", $"Updated Successfully!");
+            uriHelper.NavigateTo("/");
+
+        }
+
+
+    }
+

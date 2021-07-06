@@ -1,0 +1,152 @@
+﻿@page "/login"
+@layout AuthLayout
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authStateProvider
+<div class="center">
+    <div class="header">
+        Shop Morocco
+    </div>
+
+    <EditForm OnValidSubmit="OnSubmit" Model="loginRequest">
+        <DataAnnotationsValidator />
+        <div class="formm">
+            <InputText id="inputUsername" class="inp" @bind-Value="loginRequest.UserName" autofocus placeholder="Username" />
+            <i class="far fa-user"></i>
+            <ValidationMessage For="@(() => loginRequest.UserName)" />
+
+            <InputText type="password" id="inputPassword" class="inp pass" placeholder="Password" @bind-Value="loginRequest.Password" />
+            <i class="fas fa-lock" onclick="show()"></i>
+            <ValidationMessage For="@(() => loginRequest.Password)" />
+            <br />
+            <div class="remmber">
+                <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@loginRequest.RememberMe" />
+                <label class="form-check-label" for="inputRememberMe">Remember Me</label>
+            </div>
+
+            <input type="submit" class="sub" value="Sign in">
+            <label class="text-danger">@error</label>
+            <NavLink href="register">
+                <h6 class="signup ">Create account</h6>
+            </NavLink>
+
+
+
+
+        </div>
+    </EditForm>
+
+</div>
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(#a429bc,#9225a7,#7f2092);
+        height: 100vh;
+        overflow: hidden;
+        font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    .center {
+        width: 430px;
+        margin: 130px auto;
+        position: relative;
+    }
+
+        .center .header {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            padding: 25px 0 30px 25px;
+            background: #5c1769;
+            border-bottom: 1px solid #370e3f;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .center .formm {
+            position: absolute;
+            background: white;
+            width: 100%;
+            padding: 50px 10px 0 30px;
+            box-sizing: border-box;
+            border: 1px solid #6d1c7d;
+            border-radius: 0 0 5px 5px;
+        }
+
+    .formm .inp {
+        height: 50px;
+        width: 95%;
+        padding: 0 10px;
+        border-radius: 3px;
+        border: 1px solid silver;
+        font-size: 18px;
+        outline: none;
+    }
+
+    .formm .pass {
+        margin-top: 10px;
+    }
+
+    .formm i {
+        position: absolute;
+        font-size: 25px;
+        color: grey;
+        margin: 15px 0 0 -45px;
+    }
+
+    i.fa-lock {
+        margin-top: 25px;
+    }
+
+    .formm .sub {
+        margin-top: 20px;
+        margin-bottom: 40px;
+        width: 95%;
+        height: 45px;
+        color: white;
+        cursor: pointer;
+        line-height: 45px;
+        border-radius: 45px;
+        border-radius: 5px;
+        background: #5c1769;
+    }
+
+        .formm .sub:hover {
+            background: #491254;
+            transition: .5s;
+        }
+
+    .formm .signup {
+        text-decoration: none;
+        font-size: 18px;
+        color: #7f2092;
+        text-align: center;
+    }
+
+    .formm .remmber {
+        text-decoration: none;
+        font-size: 18px;
+        color: #7f2092;
+        padding: 0 0 0 20px;
+        margin-top: 10px;
+    }
+</style>
+
+@code{
+    LoginRequest loginRequest { get; set; } = new LoginRequest();
+    string error { get; set; }
+
+    async Task OnSubmit()
+    {
+        error = null;
+        try
+        {
+            await authStateProvider.Login(loginRequest);
+            navigationManager.NavigateTo("");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

@@ -1,0 +1,46 @@
+﻿<EditForm Model="@pd" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Title :</label>
+        <div>
+            <InputText @bind-Value="@pd.Title" />
+            <ValidationMessage For="@(() => pd.Title)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Description :</label>
+        <div>
+            <InputText @bind-Value="@pd.Description" />
+            <ValidationMessage For="@(() => pd.Description)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Image :</label>
+        <div>
+            <InputText @bind-Value="@pd.Image" />
+            <ValidationMessage For="@(() => pd.Image)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Categorie :</label>
+        <div>
+            <InputNumber @bind-Value="@pd.CategoryId" />
+            <ValidationMessage For="@(() => pd.CategoryId)" />
+        </div>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+
+</EditForm>
+
+
+@code {
+    [Parameter] public Product pd { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+}

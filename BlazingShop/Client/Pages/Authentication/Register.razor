@@ -1,0 +1,101 @@
+﻿@page "/register"
+@layout AuthLayout
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authStateProvider
+
+<div class="container register">
+    <div class="row">
+        <div class="col-md-3 register-left">
+            <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt="" />
+            <h3>Welcome Back!</h3>
+            <p>To keep connected with us please login with your personal info</p>
+            <NavLink href="login">
+                <input type="submit" value="Login" />
+            </NavLink>
+        </div>
+        <div class="col-md-9 register-right">
+            <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active">Shop</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link ">Morocco</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h3 class="register-heading">Create Account</h3>
+
+                    <EditForm class="row register-form" OnValidSubmit="OnSubmit" Model="registerRequest">
+                        <DataAnnotationsValidator />
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <InputText id="inputUsername" class="form-control" placeholder="Username" autofocus @bind-Value="@registerRequest.UserName" />
+                                <ValidationMessage For="@(() => registerRequest.UserName)" />
+                            </div>
+                            <div class="form-group">
+                                <InputText id="inputFullName" class="form-control" placeholder="Full Name" autofocus @bind-Value="@registerRequest.FullName" />
+                                <ValidationMessage For="@(() => registerRequest.FullName)" />
+                            </div>
+                            <div class="form-group">
+                                <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="@registerRequest.Password" />
+                                <ValidationMessage For="@(() => registerRequest.Password)" />
+                            </div>
+                            <div class="form-group">
+                                <InputText type="password" id="inputPasswordConfirm" class="form-control" placeholder="Password Confirmation" @bind-Value="@registerRequest.PasswordConfirm" />
+                                <ValidationMessage For="@(() => registerRequest.PasswordConfirm)" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <InputText id="inputEmail" class="form-control" placeholder="Email" autofocus @bind-Value="@registerRequest.Email" />
+                                <ValidationMessage For="@(() => registerRequest.Email)" />
+                            </div>
+                            <div class="form-group">
+                                <InputText id="inputAddress" class="form-control" placeholder="Address" autofocus @bind-Value="@registerRequest.Address" />
+                                <ValidationMessage For="@(() => registerRequest.Address)" />
+                            </div>
+                            <div class="form-group">
+                                <InputText id="inputPhoneNumber" class="form-control" placeholder="Phone Number" autofocus @bind-Value="@registerRequest.PhoneNumber" />
+                                <ValidationMessage For="@(() => registerRequest.PhoneNumber)" />
+                            </div>
+                            <input type="submit" class="btnRegister" value="Register" />
+
+                        </div>
+                        <label class="text-danger">@error</label>
+                    </EditForm>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    body, html {
+        background: radial-gradient(#a429bc,#9225a7,#7f2092);
+    }
+</style>
+
+@functions{
+
+    RegisterRequest registerRequest { get; set; } = new RegisterRequest();
+    string error { get; set; }
+
+    async Task OnSubmit()
+    {
+        error = null;
+        try
+        {
+            await authStateProvider.Register(registerRequest);
+            navigationManager.NavigateTo("");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}
+
